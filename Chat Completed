@@ -8,3 +8,9 @@ Effect: No R chunks, starter code, exercise or solution changes are needed for t
 Decision: Approve — Cam's explicit request on 2026-10-09.
 Status: Verified.
 Verification: Saved source comparison confirms the four slides moved verbatim and in order, source slide count decreased by four, destination opens with these four slides followed by learning goals, both exercises and every R code chunk are unchanged, and all referenced assets exist. Copied illustration is byte-identical. No render, Canvas edit, commit or push performed. Checklist: 1 source relocation Verified; 2–7 Not applicable to this narrow request; 8 GitHub publication Blocked (previously deferred); 9 published slide update Needs update (deferred).
+
+
+2. Publish approved Lecture 10 source relocation — 2026-10-09.
+Decision: Approve — Cam requested commit and push of all changes from the lecture update.
+Status: Verified.
+Verification: Source, copied illustration and existing tracking were committed and pushed to main/origin/main as f89f6ace6440f21e1ee939b4836e39e5dbf1c62b; local and remote-tracking commit IDs matched and the working tree was clean. Rendered Lecture 10 HTML remains unchanged; a separate render/publication refresh is reported as follow-up for that lecture. This publication completion note will also be committed and pushed.
