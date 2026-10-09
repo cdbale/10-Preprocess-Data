@@ -7,12 +7,39 @@ output:
     css: style.css
 ---
 
-## Key Concepts | Prepare the Data for the Story
+## Don't be a Cuttlefish!
 
-- **Preprocessing:** data wrangling for models, including transformations and feature engineering.
-- **Dummy coding:** express categorical levels as binary indicator variables.
-- **Reference levels:** interpret each indicator relative to its omitted baseline.
-- **Consistent predictions:** apply the training recipe to testing data and counterfactuals, then report results in meaningful units.
+<center>
+![](Figures/cuttlefish.jpg){width=720px}
+</center>
+
+## Have Integrity
+
+"People can behave like cuttlefish, changing their clothing, language, behavior, and thoughts, depending on their surroundings. They might do this in order to impress or be accepted by others. However, this behavior does people more harm than good. In their eagerness to blend in, they can sacrifice their integrity."
+
+[Barbara A. Lewis](https://www.churchofjesuschrist.org/study/ensign/2018/04/integrity?lang=eng)
+
+## Pressure, Decisions, and Consequences
+
+| Case | Pressure and decision | Consequence |
+|---|---|---|
+| Wells Fargo cross-selling fraud | Meet sales goals; employees opened millions of unauthorized accounts. | [Wells Fargo agrees to pay $3 billion in settlement](https://www.justice.gov/archives/opa/pr/wells-fargo-agrees-pay-3-billion-resolve-criminal-and-civil-investigations-sales-practices). |
+| Purdue Pharma opioid scandal | Sell prescription drugs; aggressive marketing downplayed addictive risks and encouraged over-prescription. | [Criminal guilty pleas, $8 billion settlement, dissolution and repurposing for public benefit](https://www.justice.gov/archives/opa/pr/justice-department-announces-global-resolution-criminal-and-civil-investigations-opioid). |
+
+What pressures could tempt an analyst to tell the story management wants to hear?
+
+## What Should I Do?
+
+- Be transparent about analytical decisions and motivations. Don't hunt for statistical significance.
+- Be honest about uncertainty and possible omitted influences.
+- Conduct analyses **in pursuit of truth**, not in pursuit of a specific result.
+
+## Today's Learning Goals
+
+- Make analytical decisions transparently, without hunting for statistical significance.
+- Prepare model data using transformations and feature engineering.
+- Encode categorical predictors with indicators and interpret them relative to a reference level.
+- Apply the training recipe to testing data and counterfactuals, then report predictions in meaningful units.
 
 Today we develop the **preprocess** stage introduced in lecture 07 and connect it to the full modeling workflow.
 

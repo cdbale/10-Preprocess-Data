@@ -1,0 +1,10 @@
+
+
+1. Move Lecture 08 slides 39–42 to the opening of Lecture 10 — 2026-10-09.
+Target: 08 Explanatory Variables.Rmd and 10-Preprocess-Data/12 Preprocess Data.Rmd. Slides: Don't be a Cuttlefish!; Have Integrity; Pressure, Decisions, and Consequences; What Should I Do?
+Issue/evidence: Cam explicitly requested relocating the current four-slide block to the beginning of the preprocessing lecture. Current source numbering confirms those titles at slides 39–42.
+Change: Remove the complete block from Lecture 08 and insert it immediately after Lecture 10's title slide, preserving its wording and order. Copy Figures/cuttlefish.jpg to the destination lecture. Place Today's Learning Goals after the opening spiritual/integrity block, adapting the existing preprocessing goals to include analytical integrity.
+Effect: No R chunks, starter code, exercise or solution changes are needed for this relocation. Rendered output is not regenerated for this source-only change. Canvas and GitHub publication remain deferred.
+Decision: Approve — Cam's explicit request on 2026-10-09.
+Status: Verified.
+Verification: Saved source comparison confirms the four slides moved verbatim and in order, source slide count decreased by four, destination opens with these four slides followed by learning goals, both exercises and every R code chunk are unchanged, and all referenced assets exist. Copied illustration is byte-identical. No render, Canvas edit, commit or push performed. Checklist: 1 source relocation Verified; 2–7 Not applicable to this narrow request; 8 GitHub publication Blocked (previously deferred); 9 published slide update Needs update (deferred).
