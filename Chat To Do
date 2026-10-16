@@ -7,19 +7,8 @@ Canvas verified read-only: course 38688, 2026 Fall term 386, sections 40948/4094
 AUTHORIZED LOCAL WORK — VERIFIED
 Review items 1–4 moved to Chat Completed after source, code and consistency verification. Current editable artifacts: 10 Preprocess Data.Rmd, 10-starter-code.qmd, Exercise 9 Solution.qmd. Initial source condensation reduced 57 to 46 slides; subsequent guide/user edits and the CampaignSpend/Treatment model updates are recorded in Chat Completed. Current source and user-rendered HTML define 46 slides after subsequent user edits. No approved local work remains active.
 
-6. Render and GitHub publication — current 10-Preprocess-Data.html, main/origin/main.
-Issue/evidence: current local 10-Preprocess-Data.html predates the CampaignSpend source migration. User removed legacy HTML/index; those deletions are preserved. No automatic build. Updating Rmd does not update hosted slides.
-Change proposed: when explicitly authorized, render and inspect current slides, use consistent Lecture 10 HTML naming, commit intended lecture changes, push main and verify remote/deployment.
-Effect: prerequisite for item 7. Do not render, commit or push during this source update.
-Decision: Approve — direct publication request, 2026-10-16.
-Status: In progress — current user-rendered HTML verified against source headings and exercise instructions; index.html matches exactly. All repository changes authorized for commit/push; Pages deployment verification follows.
-
-7. Canvas slide hyperlink — item 3180679, https://cdbale.github.io/10-Preprocess-Data/.
-Issue/evidence: final direct HTTPS fetch on 2026-10-14 returned 200 with soup_data and Exercise 11, without home_goods_customers. Final API read confirms item 3180679 retains this URL and is unpublished. Current migration is unpublished.
-Change proposed: after authorized verified deployment, refresh version query if needed, read back saved URL and fetch destination to confirm final content. Replace old downloadable HTML if authorized.
-Effect: depends on item 6 and Canvas authorization.
-Decision: Approve — direct publication request, 2026-10-16.
-Status: In progress — update and verify Canvas URL after GitHub Pages deployment.
+PUBLICATION COMPLETE — 2026-10-16
+Items 5–7 moved to Chat Completed after verification. No active publication tasks remain.
 
 USER REQUESTED CHANGES
 (Reserved for Cam's additions.)

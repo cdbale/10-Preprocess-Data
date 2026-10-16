@@ -216,3 +216,19 @@ Effect: depends on verified local work; shared CSV/PDF already available.
 Decision: Approve — direct publication request, 2026-10-16.
 Status: Verified — uploaded current HTML (14087616), starter (14087617), and solution (14087619); downloaded all three and verified SHA256 against local files. Solution unlock_at is 2026-11-04T00:00:00Z (November 3, 5 p.m. America/Denver). Updated Exercise 9 instructions from matching slides/solution and linked its rubric in Grade Exercise 9. Existing deadlines and assignment publication settings preserved. Exercise, grading and solution now grouped under Live Workshop; empty obsolete Exercise 9 header removed.
 
+
+6. Render and GitHub publication — current 10-Preprocess-Data.html, main/origin/main.
+Issue/evidence: current local 10-Preprocess-Data.html predates the CampaignSpend source migration. User removed legacy HTML/index; those deletions are preserved. No automatic build. Updating Rmd does not update hosted slides.
+Change proposed: when explicitly authorized, render and inspect current slides, use consistent Lecture 10 HTML naming, commit intended lecture changes, push main and verify remote/deployment.
+Effect: prerequisite for item 7. Do not render, commit or push during this source update.
+Decision: Approve — direct publication request, 2026-10-16.
+Status: Verified — all repository changes committed and pushed in cd983adbf00b996f2c5febc86500e427f645e3a5; GitHub Pages workflow 38969556282 completed successfully. Published the existing current user-rendered HTML without regenerating it. Confirmed all 46 slide headings against source, matching exercise instructions across slides/solution/Canvas, and identical HTML/index. Inspected the existing presentation in a hidden browser; all content fits, including the last slide near its lower edge.
+
+7. Canvas slide hyperlink — item 3180679, https://cdbale.github.io/10-Preprocess-Data/.
+Issue/evidence: final direct HTTPS fetch on 2026-10-14 returned 200 with soup_data and Exercise 11, without home_goods_customers. Final API read confirms item 3180679 retains this URL and is unpublished. Current migration is unpublished.
+Change proposed: after authorized verified deployment, refresh version query if needed, read back saved URL and fetch destination to confirm final content. Replace old downloadable HTML if authorized.
+Effect: depends on item 6 and Canvas authorization.
+Decision: Approve — direct publication request, 2026-10-16.
+Status: Verified — Canvas item 3180679 is published and links to https://cdbale.github.io/10-Preprocess-Data/?v=cd983adbf00b996f2c5febc86500e427f645e3a5#1. Downloaded through the saved Canvas URL and verified the complete HTML equals local index.html after line-ending normalization. Rechecked all three Canvas file downloads by SHA256, release timestamp, both descriptions, preserved assignment settings, and Live Workshop bundle placement.
+
+Final publication audit: all requested uploads and description/link updates verified. Exercise 9 and Grade Exercise 9 retain their existing unpublished status; the slide link and three file module items are published, with the solution date-restricted until November 3 at 5 p.m. Mountain. Assignment due dates and other settings were preserved. Publication tracking is committed separately after verification.
