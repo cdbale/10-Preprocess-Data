@@ -14,3 +14,205 @@ Verification: Saved source comparison confirms the four slides moved verbatim an
 Decision: Approve — Cam requested commit and push of all changes from the lecture update.
 Status: Verified.
 Verification: Source, copied illustration and existing tracking were committed and pushed to main/origin/main as f89f6ace6440f21e1ee939b4836e39e5dbf1c62b; local and remote-tracking commit IDs matched and the working tree was clean. Rendered Lecture 10 HTML remains unchanged; a separate render/publication refresh is reported as follow-up for that lecture. This publication completion note will also be committed and pushed.
+
+
+LECTURE 10 LOCAL UPDATE — 2026-10-14
+
+1. Slide examples — Preprocess Data through Return the Scenarios to the Managerial Decision; Live Coding; concluding Exercise.
+Issue/evidence: soup promotions, iFood and old lecture references conflict with Lectures 06–09's customer analysis.
+Change: migrate to home_goods_customers.csv, retaining every existing concept, the integrity opening, correctly placed learning goals, open live coding and concluding semi-open exercise. Use income/home size/education to explain past spending; use customer profiles for counterfactuals. Copy the established CSV and dictionary. Correct normalization wording (standard deviation, not variance) and inverse-log arithmetic where needed.
+Effect: requires matching starter code and exercise solution; does not authorize publication.
+Decision: Approve — explicit user request.
+Status: Verified.
+Verification — 2026-10-14: Final source: 10 Preprocess Data.Rmd, slides 9–42 and concluding Exercise 9 slides 44–46. All 25 R chunks parsed and executed (including code-display chunks), and plots built successfully without rendering slides. Customer inputs and dictionary are byte-identical to Lecture 09. Same 9,603 eligible records, 7,682/1,921 classroom split; new examples use PreviousSpend, IncomeThousands, HomeSizeHundreds and Education. Education baseline is high school or less, and baked indicators remain 0/1. Scenario factor levels match training; changing the placeholder outcome leaves baked predictors unchanged. Integrity opening preserved verbatim and goals remain immediately after it. All referenced assets exist. No disclosure about data construction appears in the updated student-facing sources.
+
+
+2. Slide condensation — recipe introduction/build-up, histogram sequences, duplicate RMSE reveal and scenario displays.
+Issue/evidence: repeated recipe definitions, separate object-only slides, duplicate Wait...Were the Previous RMSE values Comparable? headings, and repeated code can be combined.
+Change: retain conceptual sequence, recipe analogy/art, raw and log visualizations, missingness, binary and multi-category coding, coefficient intervals, all four transformation interpretations, both RMSE scales, scenarios/intervals and three-place preprocessing reminder. Combine repeated setup/output and shorten prose. No concept or emphasis is intentionally removed.
+Effect: starter order follows condensed slides; numbers may shift, so heading references identify targets.
+Decision: Approve — explicit request to make slides concise without losing clarity.
+Status: Verified.
+Verification — 2026-10-14: Source-defined slide count reduced from 57 to 46 (title included), without a render. Concept audit: integrity slides 2–5; process/workflow 7–9; missing values 10–11; random/time split distinction 12; recipe/formula/analogy 13–14; skew/histograms and conditional errors 15–19; logs/inverse/offset/selectors 18–20; binary and k-1 indicators/reference/exact collinearity 21–23; prep/bake and no test-data learning 24; raw vs baked fits 25; horizontal coefficient intervals/equation 26–28; four transformation interpretations 29; open comparison activity 30; same-scale evaluation and both RMSE scales 31–34; counterfactual inputs, intervals, inverse endpoints and median-vs-mean/causal limits 35–39; all four additional preprocessing functions and all_predictors 40; three-place recipe reuse 41; open live coding 42; wrap-up 43; exercise 44–46. Removed duplicate reveals/object-only slides and combined repeated recipe setup; retained code/result separation for histogram readability. No visual-layout verification is claimed because rendering was not authorized.
+
+
+3. Starter alignment — 12-starter-code.qmd, all example sections.
+Issue/evidence: old soup code, completed Your Turn answer, incorrect exp(.pred) and log(.pred) inverses for offset-one recipe.
+Change: align all represented concepts, names, data, calculations and activity prompts with slides; leave open activities blank. Validate R syntax and executable surrounding code without rendering.
+Effect: depends on items 1–2.
+Decision: Approve — corresponding changes authorized by slide edits.
+Status: Verified.
+Verification — 2026-10-14: Final workbook: 10-starter-code.qmd. All 25 chunks parsed; supplied expressions match their source counterparts. Verification supplied the four practice steps in memory only, then executed all remaining code. Training/testing data, baked data, both model coefficients, dollar/log RMSE and scenario predictions match the slides. Three open activity chunks remain empty (Your Turn, Live Coding, final Exercise). New recipe/transform/inverse/interval code remains supplied. No completed live-coding or exercise solution appears in the starter.
+
+
+4. Local follow-through — separate Exercise 11 Solution.qmd, filenames/labels, and starter practice gaps.
+Issue/evidence: solution title says Exercise 14, filename says 11, current course sequence requires Exercise 9. Slides/starter use 12; README says 13. Existing five-point rubric uses soup/log-scale evaluation and unsupported sales recommendation. Prior lectures teach complete-case preparation, plotting, fitting, splitting and prediction.
+Change: rename source to 10 Preprocess Data.Rmd, starter to 10-starter-code.qmd and solution to Exercise 9 Solution.qmd; align internal labels and README. Adapt existing five-point rubric and worked solution to the final customer exercise. Replace approximately half of eligible old-material logical steps with whole-chunk practice prompts; preserve all new recipe concepts and Your Turn gaps. Record selections after final code inventory.
+Effect: supports items 1–3; old generated HTML and Canvas filenames remain pending publication. Preserve unrelated in_class.qmd and historical soup_data.csv.
+Decision: Approve — Cam approved all local follow-through on 2026-10-14.
+Status: Verified.
+Verification — 2026-10-14: Renamed all three editable artifacts to Lecture 10 / Exercise 9 and updated README. The exercise instructions match verbatim in slides, starter and solution after removing slide formatting. Existing five-point rubric retains its original five assessment areas; it now accepts defensible customer models, transformations and conclusions. All seven solution chunks parsed/executed. Solution uses exactly the same customer IDs, 7,202/2,401 split and original coefficients as Exercise 8 Solution.qmd. Verified dollar RMSE: household original 150.560662, household log 154.870001, basic original 168.234145, basic log 172.539400. Original household model remains preferred; RMSE improvement over basic original 17.673483 and over household log 4.309339. Three mean predictions and individual intervals checked against printed values. Seven eligible prior-material logical steps: missing-value inspection, split/access, raw distribution plot, category counts, raw fit, coefficient table, raw-format preview. Removed four (57%): missing-values, split, fit-raw, raw-format. Retained distribution plot, category counts and coefficient table for continuity. Excluded new recipe/transform/baked-fit/error-scale/scenario-processing work and all open activities. New factor baseline and profile-format setup retained. Historical in_class.qmd/soup_data.csv, generated HTML, styles and assets remain unchanged.
+
+
+FINAL LOCAL COMPLETION AUDIT — 2026-10-14
+Skill checklist 1 slides: Verified (source and code; no render).
+2 exercise: Verified, Exercise 9 instructions, solution and existing five-point rubric aligned.
+3 starter alignment: Verified by expression/result comparison and in-memory practice fixtures.
+4 starter reduction: Verified, four of seven eligible steps replaced with whole practice chunks.
+5 local numbering: Verified, Lecture 10 source/starter and Exercise 9 solution/internal labels. Legacy HTML/Canvas names remain publication tasks.
+6 Canvas exercise description: Needs update, Exercise 9 (1452116) still empty on final API read.
+7 grading note: Needs update, Grade Exercise 9 (1452134) lacks rubric-in-solution note.
+8 starter upload: Needs update, old 12-starter-code.qmd remains attached.
+9 GitHub submission: Blocked — awaiting explicit render/publication permission; main/origin/main unchanged and local changes uncommitted.
+10 Pages/Canvas hyperlink: Blocked — current source unpublished. Final direct HTTPS fetch returned 200, old soup_data and Exercise 11, no home_goods_customers. Saved item 3180679 still points to https://cdbale.github.io/10-Preprocess-Data/ and is unpublished.
+Canvas bundle: Needs update — Exercise 9 due Nov. 3 (Live Workshop in syllabus); exercise/grading currently under Exercise 9 subheader, separate solution missing in module. No Canvas writes performed.
+Verification files in course tmp/lecture10-work: check-source.R and audit.py. Source/starter/solution checks passed; git diff --check passed; prior HTML and historical materials unchanged; completed entries appended before active entries removed, preserving the user's additions section.
+Primary API references checked: https://recipes.tidymodels.org/reference/step_log.html ; https://recipes.tidymodels.org/reference/step_dummy.html ; https://recipes.tidymodels.org/reference/step_normalize.html ; https://recipes.tidymodels.org/reference/bake.html .
+No render, Canvas edit, commit or push. All authorized local work is verified. Full distribution remains pending items 5–7 in Chat To Do.
+
+8. Early preprocessing reference — after Inferential Modeling Workflow, before Preprocess Data.
+Issue/evidence: Cam reports students struggle to match preprocessing steps to variable types and requests a reference near the beginning.
+Change: add a compact variable-type decision table with examples, conditional steps and a training/testing/scenario reminder. Distinguish continuous predictors, binary indicators, categorical predictors, the outcome and missing values; preview optional numeric tools without implying every variable needs every step.
+Effect: one explanatory slide only; no R code, starter, solution, render or publication changes.
+Decision: Approve — Cam's explicit request on 2026-10-14.
+Status: Verified.
+Verification: Source slide 9, Preprocessing Guide | Choose by Variable Type, follows Inferential Modeling Workflow and precedes the first coding example. Six table rows connect variable types/issues to actions and tools; the footer distinguishes training-only prep from bake on all three data uses. Source/diff comparison confirms the single-slide insertion and no R-code or other existing-slide changes; source now has 47 slides. User deletions of legacy HTML, in_class.qmd and soup_data.csv were preserved. No render or publication. Narrow-request checklist: 1 Verified; 2-8 Not applicable; 9-10 remain previously pending publication. Earlier completed-record slide references describe the prior 46-slide version.
+
+9. Standalone preprocessing guide PDF — 2026-10-15.
+Target: slide 9, Preprocessing Guide, exported to output/pdf/preprocessing-guide.pdf.
+Issue/request: Cam requested a separate PDF containing just this guide.
+Change: create one landscape Letter page with the current slide title, introductory sentence and six-row table, preserving Cam's latest wording exactly. Do not regenerate the presentation or alter its source.
+Effect: adds one downloadable local PDF; no starter, solution, Canvas or GitHub changes.
+Decision: Approve — explicit user request.
+Status: Verified.
+Verification: Current HTML slide 9 and Rmd table agree. PDF text extraction confirms every table cell and introductory sentence; one-page count verified. Poppler-rendered PNG visually inspected: readable text, aligned columns, no clipping, overlap or missing glyphs. PDF creation is complete; earlier lecture publication tasks remain pending.
+
+10. CampaignSpend outcome migration — 2026-10-15.
+Target: lecture source from Preprocess Data through Exercise 9; corresponding starter, solution/rubric and README.
+Issue/evidence: Cam requests CampaignSpend instead of PreviousSpend to illustrate outcome logging. Current CampaignSpend has 7,993 zeros among 10,000 customers, median 0 and maximum about 1,229. On unchanged 80/20 split, logged versions lower dollar MAE/log RMSE but increase dollar RMSE.
+Change: replace the lecture's outcome and 12-month historical framing with 30-day campaign-window spending. Keep existing predictors/sample/split; add an outcome-only log benchmark to separate outcome and predictor changes. Retain zeros and explain conditional-mean/back-transformation distinctions and model-based interval limits. Carry corresponding code into starter, preserve practice gaps and current user slide edits. Adapt already-authorized exercise/solution follow-through to refit the prior predictor sets for the new outcome, recomputing all reported results. Keep the generic guide PDF unchanged.
+Effect: source/starter/solution/README only; no render, PDF edit, Canvas edit or GitHub publication. Classroom illustration must report the observed metric tradeoff without promising an RMSE improvement.
+Decision: Approve — explicit outcome-switch request, with corresponding starter changes and continuing authorized local follow-through.
+Status: Verified.
+Verification — 2026-10-15: Source slide 10 defines CampaignSpend as 30-day spending after assignment, retaining zero-spending customers and clarifying pooled email/control groups. Slide 17 illustrates its long tail and approximately 80% zeros. Added source slide 28 (Isolate the Outcome Transformation) and 38 (What Did the Log Transformation Change?), keeping all existing concepts and the user's latest opening/guide/restructuring. Source now defines 50 slides. All model outcomes, histograms, equations, scores, scenario inputs and interpretation use CampaignSpend. Exact original classroom sample and seed-42 80/20 split retained (7,682/1,921).
+Classroom execution: raw dollar RMSE 74.926136, dollar MAE 47.682562, log RMSE 3.110500; outcome-log-only 80.538988 / 30.941704 / 1.932523; outcome-plus-predictor logs 80.537019 / 30.936957 / 1.931120. The new comparison reports the metric tradeoff rather than promising an improvement under every score. Source code contains no Conversion predictor. Raw predictions satisfy the log comparison's domain. Training-prepared dummy indicators and inverse transforms verified; altering the scenario outcome placeholder leaves predictors unchanged.
+Starter: all affected examples and added benchmark/metric-summary code aligned; all three fitted coefficient vectors, baked data, metrics and profile results match the slides when the four intentional practice gaps are supplied only in memory. Four practice gaps and three activity gaps remain empty in the actual workbook. Current user's unrelated slide changes were preserved rather than overwritten with an earlier version.
+Exercise 9: instructions match across slides, starter and solution; predictor sets from Exercise 8 are refitted for the new outcome, with unchanged 7,202/2,401 sample membership. All solution fits and recipes use CampaignSpend. Dollar RMSE: household raw 79.679476, basic raw 79.893813, household logged 85.408704, basic logged 85.452605. Dollar MAE respectively 47.782161, 47.887258, 31.582107, 31.584747. Reported profile predictions 24.120758, 31.353679, 38.586600 and interval endpoints checked. Negative interval limits and the questionable normal-error assumption with many zeros are discussed explicitly; no clipping or claimed verified coverage. Existing five-point rubric updated to match the outcome and metric comparison.
+Checks: 26 source, 27 starter and 8 solution chunks parsed/executed with plots built in memory; matching affected slide/starter results and exact prior-exercise customer IDs verified. Final display-only rounding and source output-suppression edits reviewed in diff. Static audit confirms identical exercise wording, no stale historical-outcome language, unchanged user opening/guide, preserved practice gaps, valid assets, and byte-identical preexisting HTML and standalone guide PDF. git diff --check passed. Verification scripts: course tmp/lecture10-work/verify-campaign.R and audit-campaign.py.
+Narrow-change checklist: 1 slide source Verified; 2 exercise/solution/rubric Verified under continuing local follow-through authorization; 3 starter Verified; 4 existing practice gaps Verified (preserved); 5 numbering unchanged and Verified; 6-8 Canvas description/grading/upload Needs update (previously pending); 9 GitHub and 10 hosted slide/Canvas refresh Blocked pending publication authorization. No render, PDF edit, Canvas call/write, commit or push. README records the new outcome and stale local HTML. The generic guide PDF remains applicable and unchanged.
+
+11. Campaign model and preprocessing by variable type — Preprocessing Guide; model setup, recipes, interpretation, profiles and Exercise 9.
+Issue/evidence: user requests CampaignSpend ~ PreviousSpend + Treatment + Education and a business question about campaign effects and responsive consumers. Existing income/home-size models omit randomized Treatment.
+Change: update the authorized local lecture, starter, exercise/solution/rubric and guide handout; explicitly retain binary Treatment at 0/1, compare matched email/no-email profiles, and distinguish spending associations from heterogeneous treatment effects. Preserve existing concepts and practice gaps. Recompute results on the eligible sample and verify source/code without rendering slides.
+Decision: Approve — direct user request; prior approval covers local follow-through.
+Status: Verified — 2026-10-15.
+
+Verification and scope:
+- Slide source uses CampaignSpend ~ PreviousSpend + Treatment + Education; slide 9 and matching one-page PDF show all four variable types. Preserved opening, log/recipe/dummy/timing concepts, both scoring scales, coefficient interpretation, prediction intervals, mean/median distinction, optional steps and open live coding. Added one concise paired-contrast slide; current source has 51 slides.
+- Dictionary confirms randomized Treatment (assignment, not opening). Business framing, coefficients and paired profiles distinguish assignment effects from prior-spending/education associations and explain why main effects cannot identify heterogeneous treatment response. No claim that a back-transformed contrast is average dollar lift.
+- Full 10,000-customer sample is complete on model variables; class 8,000/2,000 and exercise 7,500/2,500 at seed 42. Zeros retained; unused survey missingness no longer excludes customers.
+- Verified explicit spending-only logs, unchanged Treatment 0/1, three education indicators with high-school-or-less baseline, training-only preparation and common holdouts. Four starter practice gaps retained; two live-activity gaps remain. Removed the obsolete trailing separate Exercise assignment from starter to meet the skill's endpoint requirement.
+- Updated Exercise 9 and its solution/existing five-point rubric to compare the three versions of the requested model and six rows for three matched customer profiles. Student-facing exercise text matches exactly across slides and solution.
+- Executed all source, starter (gap fixtures in memory only), and solution R code; built ggplots without rendering slides; evaluated inline result expressions. Verified profile placeholder independence, paired effects, sample membership and no holdout leakage.
+- Class dollar RMSE/MAE: raw 72.775737/43.924394; outcome-log 80.256600/29.100238; both-logs 80.392748/29.124293. Raw has 152 holdout predictions <= -1, so full-holdout log RMSE is explicitly NA without dropping or clipping. Logged RMSEs 1.811777 and 1.817842.
+- Exercise dollar RMSE/MAE: raw 70.882360/43.734097; outcome-log 77.999801/28.400732; both-logs 78.137800/28.431208. Preferred raw model; matched dollar contrasts 11.953942. Profile prior spend 800/1000/1400 dollars is inside observed data support. Model-interval and impossible-negative limits explained.
+- Guide PDF regenerated from source table, text/page-checked (one landscape Letter page), rendered to PNG and visually inspected: readable, no overlaps or clipping. Slide HTML hash unchanged. No slide rendering, Canvas edits, commits, push or deployment.
+- Source/diff and asset checks passed. Validation scripts and outputs reside outside the lecture repository in tmp/lecture10-work. Existing user deletions preserved. Pending items 5–7 retain separate publication scope.
+
+12. Match the guide PDF introduction to the slide source.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Updated output/pdf/preprocessing-guide.pdf to say: "Choose preprocessing steps based on the variable type, rather than applying every step to every variable." The authoring script now reads this sentence from the slide source. Confirmed exact extracted-text match, one-page output and visually checked layout. Table wording and layout retained; slide source unchanged.
+
+13. Place the guide PDF in the lecture repository root.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Moved the latest guide to 10-Preprocess-Data/preprocessing-guide.pdf and verified its SHA-256 hash. Preserved the older root copy in tmp/lecture10-work/root-guide-before-relocation-20261016.pdf before replacing it. Updated the authoring script and README to use the repo root for future PDF output. The nested guide file no longer exists.
+
+14. Replace outreach with targeting in local lecture materials.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Changed two mentions in the slide source (Preprocess Data; Live Coding | Who Responded to the Email?) and two in the starter code, including the grammatical change to "a targeting budget." Checked the exercise instructions and separate Exercise 9 solution: neither contained outreach. Verified no remaining mentions in the three authoritative source files. Generated HTML was not edited or rendered.
+
+15. Refresh guide PDF to match the user's revised preprocessing table.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Regenerated preprocessing-guide.pdf in the lecture repository root from the current slide table, including the revised continuous-predictor and continuous-outcome guidance. Verified every extracted table cell against the source, confirmed one page, and visually checked the rendered PDF. Slide source unchanged.
+
+16. Replace slide 29's faceted coefficient comparison with three single-model slides.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Replaced Parameter Estimates | Raw and Transformed Models with three full-width horizontal 95% confidence-interval plots in the requested order: both spending logs (fit_baked), outcome log only (fit_outcome_log), raw (fit_raw). Retained the preceding Horizontal Intervals teaching slide and all surrounding user edits. Added matching starter chunks, consistent readable predictor labels and model-scale axis labels. Executed the required model and plot code, verified estimates and interval bounds against each fit, confirmed one panel per plot and identical starter code, and visually inspected all three temporary PNG previews. Source has two additional slides. No slide rendering or generated HTML changes.
+
+17. Simplify original slides 32-52 and align the starter and exercise solution.
+Decision: Approve - direct user request and follow-up, 2026-10-16. User explicitly permits removal of complexity, specifies MAE only then full-data refit/interpretation then profiles, allows profile prediction intervals, and authorizes starter/exercise/solution alignment.
+Status: Verified.
+Replaced the original 21-slide ending with 16 slides (new slides 32-47). Preserved slides 1-31 byte for byte, including the three coefficient plots and user edits. Removed RMSE/log-score comparisons, inverse-transformation bias/median discussions, optional preprocessing detours, and other unnecessary material. Kept direct, short code with no custom functions. Test predictions are converted to dollars, ranked by MAE, and the selected outcome-only log specification is then refit on all 10,000 customers. The full-data fit supplies coefficients, confidence intervals and six paired profile predictions with 95% individual prediction intervals in dollars.
+Aligned the starter's ending, slide exercise instructions and separate Exercise 9 solution/existing five-point rubric. Preserved the starter's earlier code/practice gaps; ends with open live coding. Exercise uses seed-42 75/25 split and MAE selection followed by full-data refit. Separate exercise instructions match the slides.
+Executed all slide/starter/solution chunks, supplying starter gaps in memory only; evaluated inline results. Verified class 8,000/2,000 and exercise 7,500/2,500 splits; test-MAE ordering; final model trained on 10,000 records; matching class/starter results and matching class/exercise full-data coefficients and profiles; proper interval endpoint conversion and ordered intervals. Class MAE: outcome log 29.100238, both logs 29.124293, raw 43.924394. Exercise MAE: outcome log 28.400732, both logs 28.431208, raw 43.734097. Final Treatment coefficient 0.415005; paired dollar differences about 0.65, 1.03, 2.60 for previous spend 800/1000/1400.
+Source and protected-file checks passed. All unrelated artifacts, PDF and HTML unchanged. No slide rendering, Canvas updates or publication.
+
+18. Remove variable-name remapping from lecture materials.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Removed the mutate(term = case_when(...)) blocks, including all str_detect calls, from the three coefficient plots in the lecture source and their three matching starter chunks. Plots now use the original model term names. Checked the exercise solution: it already contained no such remapping. Verified neither function remains in any of the three files; executed the affected plots and confirmed matching starter code and unchanged estimates/95% interval values. No slide rendering or unrelated content edits.
+
+19. Restore a Your Turn transition at slide 28.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Inserted Your Turn! | Which Model Predicts Better? immediately after training the three models. The open prompt asks students to compare test predictions fairly, consider their scale, recommend a model, and explain why training performance alone is insufficient. Verified exact slide 28 placement and byte-for-byte preservation of all existing slide content. Subsequent slides shift by one; no code changes, slide rendering, or other teaching-artifact edits.
+
+20. Use Lecture 09's data-frame MAE pattern.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Reviewed Lecture 09's prediction/MAE slides and Exercise 8 solution. Replaced mae_vec and dollar-sign column extraction in the lecture, starter and Exercise 9 solution MAE comparison with predictions |> bind_cols(customer_test) |> mae(truth = CampaignSpend, estimate = .pred). Combined results with bind_rows, select and arrange. Also changed the solution's inline MAE extraction to slice_head/pull. Executed the code and verified unchanged model selection, final fit, predictions and intervals. Preserved surrounding user edits; no slide rendering.
+
+21. Restore the slope-interpretation table after slide 36.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Inserted Interpreting Slopes with Log Transformations as slide 37 after the final-model coefficient plot. Restored the four cases: level-level, log-level, level-log, and log-log, with a brief reminder about holding other predictors constant and the +1 offset. Verified exact position and byte-for-byte preservation of existing slide content. No code changes or slide rendering.
+
+22. Correct slope-interpretation table wording for signed coefficients.
+Decision: Approve - direct user correction, 2026-10-16.
+Status: Verified.
+Replaced "higher fitted y" in all four table rows with "expected change in y" or "expected percentage change in y," preserving the user's coefficient notation and surrounding content. Verified four updated rows and no remaining "higher" in the table.
+
+23. Apply the log-slope interpretation rule to the final-model results slide.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Replaced direction-only descriptions with signed approximate expected percentage changes computed as 100 times the full-data outcome-log coefficients: previous spend +0.23% per dollar, email assignment +41.50%, some college/associate -2.61%, bachelor's -14.06%, graduate -30.17% relative to high school or less. Kept the held-constant condition and brief confidence-interval reminder; identified CampaignSpend + 1 as the logged quantity. Re-executed current model code through final_fit to verify the values. Only Interpret the Final Results changed in the slide source; preceding table and other slides preserved. No slide rendering.
+
+24. Expand customer profiles and rank campaign-spending predictions.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Updated the lecture's Define Customer Profiles and matching starter code to use all four Education categories, Treatment 0/1, and PreviousSpend 800/1000/1400, yielding 24 profiles. Education values are obtained with distinct/pull, preserving factor levels. Existing final-recipe baking and final-model point/interval predictions now cover the full grid. Dollar predictions are stored in descending order using arrange(desc(.pred)); the slide shows the top six for readability and the starter displays all 24. Added Education to the subsequent matched-comparison key so pivot_wider produces 12 unique email/no-email pairs, not duplicate/list columns. Executed both sources and verified grid coverage, factor levels, ranking, interval alignment and identical results. No slide rendering or separate exercise changes.
+
+25. Replace slide 42 questions with concrete targeting decisions.
+Decision: Approve - direct user request and clarification, 2026-10-16.
+Status: Verified.
+Replaced the questions with four direct actions: prioritize higher prior spending (the $1,400 profiles), use email in an initial targeting test, give high-school-or-less and some-college customers similar priority, and retain a no-email control while requiring positive incremental profit before expansion. Verified current full-data coefficients and profile predictions: Treatment 0.415 with positive 95% interval; some-college interval includes zero; $1,400/high-school-or-less predictions 7.83 with email and 4.83 without; some-college email prediction 7.60. Kept claims limited to compared profiles and used a test to establish differential response. Confirmed exact slide 42 and all surrounding source unchanged. No code or other teaching-artifact edits; no slide rendering.
+
+26. Make Exercise 9 require student-chosen predictors and appropriate preprocessing.
+Decision: Approve - direct user request, 2026-10-16, with the explicit revision that students choose preprocessing appropriate to their selected variables rather than being required to compare prescribed alternatives.
+Status: Verified.
+Updated the two exercise slides to retain CampaignSpend and Treatment while asking students to justify additional pre-campaign predictors, select appropriate preprocessing, evaluate with test MAE, refit on all eligible customers, interpret coefficients and intervals, choose three meaningful paired customer profiles, and recommend targeting. Preserved seed-42 75/25 split, zero-spending customers, dollar-unit evaluation, prediction intervals and Word/Quarto submission. No required transformations or minimum number of model alternatives. Matched instructions and the five-point rubric in the separate solution; framed its existing code as one illustrative approach and added predictor/preprocessing rationale. Updated the README exercise summary. Verified identical exercise instructions, unchanged earlier slides and unchanged executable solution chunks. No starter changes, rendering or Canvas publication.
+
+27. Quantify coefficient interpretations in the Exercise 9 solution using the slide table rules.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Replaced direction-only descriptions with a five-row interpretation table showing the final coefficients, input changes/reference groups, and signed approximate percentage changes using 100 times beta. Explained the held-constant comparisons, treatment assignment, the logged CampaignSpend + 1 quantity, and which coefficient intervals exclude zero. Updated the recommendation's coefficient summary consistently. Re-executed the current solution to verify estimates and intervals; confirmed all executable code chunks unchanged. No slides, starter, rubric or generated output changed.
+
+28. Synchronize the starter with the current slide source while retaining student practice.
+Decision: Approve - direct user request, 2026-10-16.
+Status: Verified.
+Aligned the starter's section order, preprocessing code, test-prediction comments, full-data coefficient plot, slope interpretation table and numeric interpretations, ranked profile output, targeting decisions, and final live-coding prompt with the current slides. Removed obsolete pre-MAE coefficient comparisons, email/no-email comparison code, and explanations no longer in the slides; consolidated duplicate code/result displays. Preserved the missing-values, train/test split, and raw-regression practice gaps exactly. Added an empty Your Turn workspace and retained an empty final live-coding workspace. Executed the slide and starter code with practice answers supplied only in memory: model coefficients, MAE, all intermediate data, and all 24 ranked profile predictions matched. Verified every substantive starter code chunk matches slide code, all five student workspaces remain empty, and the starter ends with live coding. Slide source and all other teaching artifacts were unchanged; no rendering or publication.
+
+PUBLICATION — 2026-10-16
+
+5. Canvas exercise, grading, solution bundle and starter — assignments 1452116/1452134 and starter item 3180681.
+Issue/evidence: empty Exercise 9 description, no rubric-in-solution note, outdated 12-starter-code.qmd, missing solution entry, bundle under Exercise 9 instead of due-date Live Workshop.
+Change proposed: after explicit authorization, post final instructions and one rubric note, replace starter attachment, upload/schedule final solution as directed, and group Exercise 9/Grade Exercise 9/solution under Nov. 3 Live Workshop. Preserve assignment settings and unrelated module contents.
+Effect: depends on verified local work; shared CSV/PDF already available.
+Decision: Approve — direct publication request, 2026-10-16.
+Status: Verified — uploaded current HTML (14087616), starter (14087617), and solution (14087619); downloaded all three and verified SHA256 against local files. Solution unlock_at is 2026-11-04T00:00:00Z (November 3, 5 p.m. America/Denver). Updated Exercise 9 instructions from matching slides/solution and linked its rubric in Grade Exercise 9. Existing deadlines and assignment publication settings preserved. Exercise, grading and solution now grouped under Live Workshop; empty obsolete Exercise 9 header removed.
+

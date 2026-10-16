@@ -1,0 +1,420 @@
+---
+title: "Lecture 10: Preprocess Data"
+format: docx
+editor: visual
+---
+
+Keep the customer CSV and dictionary in your working folder. Complete the practice prompts as we work through the examples; develop your own analyses during the live-coding activities.
+
+## Preprocess Data
+
+**Preprocessing** is data wrangling for models. 
+
+The home-goods retailer wants to know whether its email campaign increased spending, and how campaign-window spending differs by prior purchasing and education. These results will inform its next targeting decision.
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+
+customers <- read_csv("home_goods_customers.csv", show_col_types = FALSE)
+```
+
+Use `data_dictionary.pdf`. `CampaignSpend` is spending in the **30 days after assignment**; `PreviousSpend` covers the **prior 12 months**. `Treatment` is whether a consumer was assigned to **1 = campaign email, 0 = no campaign email**. Assignment does not mean the customer opened the email.
+
+## Refer to the Pre-Processing Guide
+
+Handle missing values.
+
+```{r missing-values}
+# Practice from earlier data-wrangling lectures:
+# Check missing values in CampaignSpend, PreviousSpend, Treatment, and Education.
+# Report whether any customers would be excluded for this model.
+
+```
+
+## Drop Missing Values, Transform Variables
+
+None of the variables we'll use today have missing values. 
+
+We'll set **high school or less** as the education baseline.
+
+```{r model-data}
+customer_model_data <- customers |>
+  mutate(Education = fct_relevel(Education, "High school or less"))
+
+nrow(customer_model_data)
+```
+
+## Split Before Doing Any Additional Pre-Processing
+
+```{r split}
+# Practice from Lecture 09:
+# Create customer_split with random seed 42 and 80% training customers.
+# Save its training and testing data as customer_train and customer_test.
+
+```
+
+- **8,000 training customers:** explore relationships, define and apply pre-processing steps, and fit models.
+- **2,000 testing customers:** apply pre-processing and evaluate model(s).
+
+## Analogy
+
+When you *prepare* food, you follow a recipe that defines the preparation steps.
+
+Think of *pre-processing* as *preparing* the data for the model.
+
+We're going to define a **pre-processing recipe** that defines the steps that prepare the data for the model.
+
+## First, We Specify the Ingredients
+
+```{r recipe-start}
+customer_recipe <- customer_train |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education)
+```
+
+`recipe()` identifies the outcome and predictors (*i.e.*, the ingredients) using **formula notation**. 
+
+From here, we will add **steps** to the recipe. These are operations that will be applied to the outcome and predictors to prepare them for the model.
+
+## Preprocessing Continuous Variables
+
+Inspect the distributions of the outcome and continuous predictors.
+
+```{r distributions}
+customer_train |>
+  pivot_longer(
+    c(CampaignSpend, PreviousSpend),
+    names_to = "variable", values_to = "value"
+  ) |>
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free")
+```
+
+`CampaignSpend` has many zeros and a long right tail. About **80% of customers spent nothing** during the campaign window.
+
+## Explore a Log Transformation
+
+The natural logarithm compresses large values. Its inverse is `exp()`:
+
+$$z = \log(x + 1) \quad\Longleftrightarrow\quad x = \exp(z) - 1$$
+
+```{r log-distributions}
+customer_train |>
+  pivot_longer(
+    c(CampaignSpend, PreviousSpend),
+    names_to = "variable", values_to = "value"
+  ) |>
+  mutate(log_value = log(value + 1)) |>
+  ggplot(aes(x = log_value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free")
+```
+
+The log compresses large purchases, but the zero-spending group remains at zero. It does **not** make this outcome normally distributed. Does it improve predictions?
+
+## Add a Log Step
+
+```{r recipe-log}
+customer_recipe <- customer_recipe |>
+  step_log(CampaignSpend, PreviousSpend, offset = 1)
+```
+
+- Name the two continuous spending variables explicitly.
+- `offset = 1` adds 1 before logging, which avoids problems with $log(0)$. All inputs must be greater than -1.
+
+This recipe tests one transformation choice; it does not assume every numeric variable should be logged.
+
+## Preprocessing Categorical Variables
+
+`Treatment` already uses one indicator: **0 = no email, 1 = assigned email**. Keep it unchanged. Education needs multiple indicators:
+
+| Education | Some college | Bachelor's | Graduate |
+|---|---:|---:|---:|
+| High school or less | 0 | 0 | 0 |
+| Some college/associate | 1 | 0 | 0 |
+| Bachelor's | 0 | 1 | 0 |
+| Graduate | 0 | 0 | 1 |
+
+In general, if a categorical variable has $k$ categories, your model will have $k-1$ indicator variables for that categorical variable.
+
+## Add Dummy Coding to the Recipe
+
+```{r recipe-dummy}
+customer_recipe <- customer_recipe |>
+  step_dummy(Education)
+```
+
+`step_dummy()` creates $k-1$ indicators by default, using the first factor level as the reference. We set that level explicitly earlier.
+
+## Finalizing the Recipe
+
+Once you are finished adding preprocessing steps to the recipe, you **finalize** the recipe using `prep()`.
+
+- **`prep()`** learns data-dependent settings from training data, such as category levels or normalization means.
+
+```{r prepare-recipe}
+customer_recipe <- customer_recipe |> prep()
+```
+
+## Applying the Recipe
+
+**`bake()`** applies the prepared steps to data.
+
+```{r bake-training}
+baked_customer_training <- customer_recipe |>
+  bake(new_data = customer_train)
+
+baked_customer_training |> slice_head(n = 4)
+```
+
+## Pre-Processing Timing
+
+(1) Train-test split
+(2) Construct the recipe (define variables and add preprocessing steps)
+(3) `prep()` on **training data**
+(4) Use recipe to prepare (`bake()`) training, testing, and customer profiles.
+
+Do not prepare a different recipe on testing customers or hypothetical profiles.
+
+## Fit with and without Log Transformations
+
+```{r fit-raw}
+# Practice from Lectures 06–09:
+# Create fit_raw: a linear regression for CampaignSpend using
+# PreviousSpend, Treatment and Education on customer_train.
+
+```
+
+```{r fit-baked}
+fit_baked <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ ., data = baked_customer_training)
+```
+
+`.` means all remaining columns in the baked model data. The models use `CampaignSpend` on different scales.
+
+## Isolate the Outcome Log Transformation
+
+Develop a recipe and train a model that log transforms `CampaignSpend` only. This allows us to compare the effect of the outcome's transformation from logging previous spending too.
+
+```{r outcome-only-model}
+outcome_recipe <- customer_train |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
+  step_log(CampaignSpend, offset = 1) |>
+  step_dummy(Education) |>
+  prep()
+
+fit_outcome_log <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ ., data = bake(outcome_recipe, new_data = customer_train))
+```
+
+We now have three versions: **raw**, **outcome log only**, and **both spending logs**.
+
+## Your Turn!
+
+We have trained three models. 
+
+The home-goods retailer wants to know whether its email campaign increased spending, and how campaign-window spending differs by prior purchasing and education.
+
+How should we compare the models to decide which one to use to answer the retailer's questions?
+
+Work on developing a comparison and then we'll discuss.
+
+```{r your-turn}
+# Develop your model comparison.
+
+```
+
+## Compare Predictive Performance with MAE
+
+Which model predicts campaign spending most accurately for the **testing customers**?
+
+**Mean absolute error (MAE)** is the average size of the prediction errors. An MAE of $30 means predictions are off by $30 on average.
+
+- Compare all three models on the same testing customers.
+- Express every prediction in **dollars**.
+- Choose the model with the **lowest MAE**.
+
+## Predict Spending for the Testing Customers
+
+Use the recipes already prepared on the training data.
+
+```{r testing-predictions}
+# prepare test data using recipe with both logs
+test_both_logs <- bake(customer_recipe, new_data = customer_test)
+# prepare test data using recipe with outcome log only
+test_outcome_log <- bake(outcome_recipe, new_data = customer_test)
+
+# generate predictions using all three models
+predictions_raw <- predict(fit_raw, new_data = customer_test)
+predictions_both_logs <- predict(fit_baked, new_data = test_both_logs)
+predictions_outcome_log <- predict(fit_outcome_log,
+                                   new_data = test_outcome_log)
+```
+
+**Important**: The raw model predicts `CampaignSpend`. The other two models predict `log(CampaignSpend + 1)`.
+
+We need to transform the log predictions back to dollars!
+
+## Put All Predictions in Dollars
+
+Reverse the log transformation before comparing predictions with actual spending.
+
+```{r predictions-in-dollars}
+predictions_both_logs <- predictions_both_logs |>
+  mutate(.pred = exp(.pred) - 1)
+
+predictions_outcome_log <- predictions_outcome_log |>
+  mutate(.pred = exp(.pred) - 1)
+```
+
+Raw-model predictions are already in dollars and need no conversion.
+
+## Choose the Model with the Lowest MAE
+
+```{r compare-mae}
+mae_comparison <- bind_rows(
+  "Raw" = predictions_raw |> bind_cols(customer_test) |>
+    mae(truth = CampaignSpend, estimate = .pred),
+  "Outcome log only" = predictions_outcome_log |> bind_cols(customer_test) |>
+    mae(truth = CampaignSpend, estimate = .pred),
+  "Both spending logs" = predictions_both_logs |> bind_cols(customer_test) |>
+    mae(truth = CampaignSpend, estimate = .pred),
+  .id = "model"
+) |>
+  select(model, MAE = .estimate) |>
+  arrange(MAE)
+
+mae_comparison |> mutate(MAE = round(MAE, 2))
+```
+
+The **outcome-only log model** has the lowest MAE. Logging PreviousSpend adds no improvement here; the two logged versions perform almost identically.
+
+## Refit the Selected Recipe and Model on All Customers
+
+We have finished comparing models. Keep the selected specification and now use **all 10,000 customers** to estimate the final model.
+
+```{r final-recipe}
+final_recipe <- customer_model_data |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
+  step_log(CampaignSpend, offset = 1) |>
+  step_dummy(Education) |>
+  prep()
+
+final_data <- bake(final_recipe, new_data = customer_model_data)
+```
+
+## Fit and Inspect the Final Model
+
+```{r final-model}
+final_fit <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ ., data = final_data)
+
+tidy(final_fit, conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high)
+```
+
+The coefficients describe **log(CampaignSpend + 1)**. PreviousSpend is still in dollars. Treatment and education indicators are still 0/1.
+
+## Evaluate Parameter Estimates | Horizontal Intervals
+
+```{r coefficient-plot}
+tidy(final_fit, conf.int = TRUE) |>
+  filter(term != "(Intercept)") |>
+  ggplot(aes(y = term, x = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(xmin = conf.low, xmax = conf.high),
+                orientation = "y", width = .1) +
+  geom_vline(xintercept = 0, color = "red")
+```
+
+## Interpreting Slopes with Log Transformations
+
+Hold the other predictors constant. Here, $\beta$ is the slope coefficient for $x$.
+
+| Model scales | Interpretation of slope $\beta$ |
+|---|---|
+| $y$ and $x$ | One more unit of $x$: expected change in $y$ is $\beta$ units. |
+| $\log(y)$ and $x$ | One more unit of $x$: expected percentage change in $y$ is $100\times\beta\%$. |
+| $y$ and $\log(x)$ | A 1% increase in $x$: expected change in $y$ is $\beta/100$ units. |
+| $\log(y)$ and $\log(x)$ | A 1% increase in $x$: expected percentage change in $y$ is $\beta\%$. |
+
+These rules use natural logs. When we use `log(x + 1)` or `log(y + 1)`, these interpretations still apply.
+
+## Interpret the Final Results
+
+Use the **log-outcome rule**: expected percentage change is approximately $100\times\beta\%$, holding the other predictors constant.
+
+- **PreviousSpend:** each additional $1 of previous spending corresponds to an expected change of **+0.23%**.
+- **Treatment:** moving from no email (0) to email assignment (1) corresponds to an expected change of **+41.50%**.
+- **Education:** compared with high school or less, the expected changes are **-2.61%** for some college/associate, **-14.06%** for bachelor's, and **-30.17%** for graduate education.
+
+Use the 95% confidence intervals to assess uncertainty.
+
+## Define Customer Profiles
+
+Combine **all four education categories**, **Treatment 0 and 1**, and previous spending of **$800, $1,000, and $1,400**: 24 customer profiles.
+
+```{r scenarios}
+scenarios <- expand_grid(
+  PreviousSpend = c(800, 1000, 1400),
+  Treatment = c(0, 1),
+  Education = customer_model_data |> distinct(Education) |> pull(Education)
+) |>
+  mutate(CampaignSpend = 0)
+```
+
+`CampaignSpend = 0` is a placeholder required by the recipe. We remove it before prediction.
+
+## Apply the Final Recipe and Predict
+
+Use the **final recipe and model**, refitted on all customers.
+
+```{r scenario-predictions}
+baked_scenarios <- bake(final_recipe, new_data = scenarios) |>
+  select(-CampaignSpend)
+
+profile_predictions <- bind_cols(
+  scenarios |> select(-CampaignSpend),
+  predict(final_fit, new_data = baked_scenarios),
+  predict(final_fit, new_data = baked_scenarios, type = "pred_int")
+)
+```
+
+Point predictions and 95% prediction intervals are on the log(spending + 1) scale. Convert both to dollars next.
+
+## Read the Predictions in Dollars
+
+```{r scenario-dollars}
+profile_predictions <- profile_predictions |>
+  mutate(.pred = exp(.pred) - 1,
+         .pred_lower = exp(.pred_lower) - 1,
+         .pred_upper = exp(.pred_upper) - 1) |>
+  arrange(desc(.pred))
+
+profile_predictions |>
+  slice_head(n = 6) |>
+  mutate(across(c(.pred, .pred_lower, .pred_upper), ~ round(.x, 2)))
+```
+
+All 24 profiles are ranked by predicted spending; the **six highest** are shown. The 95% prediction interval describes uncertainty in an individual customer's spending. Negative lower limits are a limitation of this model; spending cannot be negative.
+
+## Use the Predictions for a Targeting Decision
+
+- **Prioritize customers with higher previous spending.** Start with customers near **$1,400 in prior annual spending**; these profiles have the highest predicted campaign spending among those compared.
+- **Use a similar email to conduct targeting.** The treatment coefficient is positive. For the $1,400/high-school-or-less profile, predicted spending is **$7.83 with email versus $4.83 without**.
+- **Give high-school-or-less and some-college customers higher priority than customers with higher education levels.** Customers with higher education spent approximately 14% and 30% less compared to customers with lower education levels.
+
+## Live Coding | Recommend a Target Group
+
+The retailer wants a recommendation about which types of customers to target in its next email campaign.
+
+Expand the current final model to include additional customer information and recommend a target customer profile.
+
+```{r live-coding}
+# Expand the model and develop your targeting recommendation.
+
+```

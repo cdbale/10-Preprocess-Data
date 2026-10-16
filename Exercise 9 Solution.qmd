@@ -1,0 +1,275 @@
+---
+title: "Exercise 9 Solution"
+author: "Cameron Bale"
+format: docx
+---
+
+## Exercise 9 | Develop a Targeting Model
+
+The retailer wants a recommendation about which customers to target in its next email campaign.
+
+Use **CampaignSpend** as the outcome and keep **Treatment** as a predictor. **Choose and justify additional predictors** using customer information available before the campaign. Use the data dictionary to guide your choices; do not use Conversion, which is measured during the outcome window.
+
+**Choose preprocessing steps appropriate to your selected variables.** Use random seed 42 and a **75% training / 25% testing split**, retaining zero-spending customers. Evaluate your model choice using **test MAE in dollars**. Learn preprocessing settings and model coefficients from training data during evaluation.
+
+## Exercise 9 | Interpret and Recommend
+
+Refit your selected specification on **all eligible customers**. Submit a Word report rendered from Quarto with code, results, and:
+
+- Reasons for your predictor and preprocessing choices, including missing-value handling, sample sizes, and any categorical reference groups.
+- Test MAE in dollars and an explanation of your final model choice.
+- Final coefficients and 95% confidence intervals, with interpretations for Treatment and your selected predictors.
+- Predictions and 95% individual prediction intervals in dollars for **three customer profiles of your choosing**, each with and without the email. Choose profiles that help answer your targeting question.
+- A targeting recommendation supported by those predictions.
+
+Upload the report to Canvas's **Exercise 9** assignment.
+
+## Grading Rubric | Five Points Total
+
+Award up to **one point per criterion**, with partial credit for correct parts. Accept different justified predictors, preprocessing choices, profiles, and recommendations. Do not require the lecture's predictor set, three-model comparison, or specific log transformations.
+
+1. **Variable and preprocessing choices:** CampaignSpend is the outcome and Treatment is included; additional predictors are justified and available before the campaign; preprocessing suits the chosen variable types. Explains missing-value handling, sample sizes, and categorical reference groups where applicable; retains zero-spending customers.
+2. **Predictive evaluation and model choice:** uses the seed-42 75/25 split and learns settings and coefficients on training data during evaluation; reports test MAE in dollars and explains the final model choice. Any comparisons use the same testing customers. No minimum number of models is required.
+3. **Final fit and interpretation:** refits the selected recipe and model on all eligible customers after evaluation; reports coefficients and 95% confidence intervals; interprets Treatment and the chosen predictors on the appropriate scales.
+4. **Customer profiles:** chooses three plausible profiles relevant to the targeting question, each with and without email; applies the final preprocessing correctly; reports six point predictions and 95% individual prediction intervals in dollars, converting both endpoints when needed.
+5. **Report and recommendation:** Word report rendered from Quarto includes code, results, and a clear targeting recommendation supported by the profiles and their uncertainty.
+
+## Example Solution | Prepare the Data
+
+This is **one possible solution**, not a required set of predictors or preprocessing steps. It keeps Treatment and chooses PreviousSpend to capture purchasing history and Education to examine differences across customer groups. Both are available before the campaign. Other justified predictor choices are acceptable.
+
+For these variables, all 10,000 customers have complete values, including customers with zero campaign spending. The education reference is high school or less. Treatment stays 0/1, and Education is dummy-coded. This example explores logging the skewed spending outcome and, as an alternative, prior spending; students should justify steps suitable for their own variables.
+
+The three model versions below are illustrative choices. **The assignment does not require three models, particular transformations, or a minimum number of alternatives.** When comparing alternatives, use the same testing customers.
+
+```{r exercise-setup}
+library(tidyverse)
+library(tidymodels)
+
+customers <- read_csv("home_goods_customers.csv", show_col_types = FALSE)
+customer_model_data <- customers |>
+  mutate(Education = fct_relevel(Education, "High school or less"))
+
+set.seed(42)
+customer_split <- initial_split(customer_model_data, prop = 0.75)
+customer_train <- training(customer_split)
+customer_test <- testing(customer_split)
+```
+
+There are **7,500 training customers** and **2,500 testing customers**. PreviousSpend covers the prior 12 months; CampaignSpend covers the 30 days after email assignment. Treatment is 0 for no email and 1 for email assignment.
+
+## Fit the Raw Model
+
+```{r exercise-raw-model}
+fit_raw <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ PreviousSpend + Treatment + Education,
+      data = customer_train)
+```
+
+The raw model handles Education as a factor. Treatment remains a single 0/1 indicator in all three versions.
+
+## Fit the Model with Both Spending Logs
+
+```{r exercise-both-logs}
+customer_recipe <- customer_train |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
+  step_log(CampaignSpend, PreviousSpend, offset = 1) |>
+  step_dummy(Education) |>
+  prep()
+
+baked_customer_training <- bake(customer_recipe, new_data = customer_train)
+
+fit_baked <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ ., data = baked_customer_training)
+```
+
+## Fit the Outcome-Only Log Model
+
+```{r exercise-outcome-log}
+outcome_recipe <- customer_train |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
+  step_log(CampaignSpend, offset = 1) |>
+  step_dummy(Education) |>
+  prep()
+
+fit_outcome_log <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ ., data = bake(outcome_recipe, new_data = customer_train))
+```
+
+The first logged version transforms both spending variables; the second transforms only CampaignSpend. Both leave Treatment at 0/1 and create the same education indicators. All settings and coefficients are learned from training data during comparison.
+
+## Compare Predictive Performance with MAE
+
+Which model predicts campaign spending most accurately for the **testing customers**?
+
+**Mean absolute error (MAE)** is the average size of the prediction errors. An MAE of $30 means predictions are off by $30 on average.
+
+- Compare all three models on the same testing customers.
+- Express every prediction in **dollars**.
+- Choose the model with the **lowest MAE**.
+
+## Predict Spending for the Testing Customers
+
+Use the recipes already prepared on the training data.
+
+```{r testing-predictions}
+test_both_logs <- bake(customer_recipe, new_data = customer_test)
+test_outcome_log <- bake(outcome_recipe, new_data = customer_test)
+
+predictions_raw <- predict(fit_raw, new_data = customer_test)
+predictions_both_logs <- predict(fit_baked, new_data = test_both_logs)
+predictions_outcome_log <- predict(fit_outcome_log,
+                                   new_data = test_outcome_log)
+```
+
+The raw model predicts dollars. The other two models predict log(spending + 1).
+
+## Put All Predictions in Dollars
+
+Reverse the log transformation before comparing predictions with actual spending.
+
+```{r predictions-in-dollars}
+predictions_both_logs <- predictions_both_logs |>
+  mutate(.pred = exp(.pred) - 1)
+
+predictions_outcome_log <- predictions_outcome_log |>
+  mutate(.pred = exp(.pred) - 1)
+```
+
+Raw-model predictions are already in dollars and need no conversion.
+
+## Choose the Model with the Lowest MAE
+
+```{r compare-mae}
+mae_comparison <- bind_rows(
+  "Raw" = predictions_raw |> bind_cols(customer_test) |>
+    mae(truth = CampaignSpend, estimate = .pred),
+  "Outcome log only" = predictions_outcome_log |> bind_cols(customer_test) |>
+    mae(truth = CampaignSpend, estimate = .pred),
+  "Both spending logs" = predictions_both_logs |> bind_cols(customer_test) |>
+    mae(truth = CampaignSpend, estimate = .pred),
+  .id = "model"
+) |>
+  select(model, MAE = .estimate) |>
+  arrange(MAE)
+
+mae_comparison |> mutate(MAE = round(MAE, 2))
+```
+
+The **outcome-only log model** has the lowest MAE. Logging PreviousSpend adds no improvement here; the two logged versions perform almost identically.
+
+## Refit the Selected Recipe on All Customers
+
+The outcome-only log model has the lowest test MAE, about **$`r mae_comparison |> slice_head(n = 1) |> pull(MAE) |> round(2)`**. We now refit that specification on **all 10,000 customers**. We preserve the earlier test scores as the comparison evidence.
+
+```{r final-recipe}
+final_recipe <- customer_model_data |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
+  step_log(CampaignSpend, offset = 1) |>
+  step_dummy(Education) |>
+  prep()
+
+final_data <- bake(final_recipe, new_data = customer_model_data)
+```
+
+## Fit and Inspect the Final Model
+
+```{r final-model}
+final_fit <- linear_reg() |>
+  set_engine("lm") |>
+  fit(CampaignSpend ~ ., data = final_data)
+
+tidy(final_fit, conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high)
+```
+
+The coefficients describe **log(CampaignSpend + 1)**. PreviousSpend is still in dollars; Treatment and education indicators are still 0/1.
+
+## Interpret the Final Results
+
+The selected model logs the outcome but leaves the predictors in their original units. Apply the slide table's **log-outcome rule**: the expected percentage change is approximately $100\times\beta\%$, holding the other predictors constant.
+
+| Change in predictor | Coefficient $\beta$ | Approximate expected percentage change |
+|---|---:|---:|
+| PreviousSpend increases by $1 | 0.002310 | +0.23% |
+| Treatment changes from no email (0) to email assignment (1) | 0.415005 | +41.50% |
+| Some college/associate versus high school or less | -0.026094 | -2.61% |
+| Bachelor's versus high school or less | -0.140577 | -14.06% |
+| Graduate versus high school or less | -0.301727 | -30.17% |
+
+For example, comparing customers with the same previous spending and education, moving from no email to email assignment corresponds to an expected change of approximately **+41.50%** using the table's rule. This is the effect of **assignment**, not of opening or reading the email. The percentages refer to **CampaignSpend + 1**, the quantity logged by this model.
+
+Education comparisons hold previous spending and treatment assignment fixed. They describe associations with education, not effects of changing a customer's education.
+
+The 95% coefficient intervals exclude zero for PreviousSpend, Treatment, bachelor's, and graduate education. The interval for some college/associate includes zero, so its estimated **-2.61%** change does not provide clear evidence of a difference from high school or less.
+
+## Define Customer Profiles
+
+Compare three prior-spending levels, each with and without the email. Hold education at bachelor's.
+
+```{r scenarios}
+scenarios <- expand_grid(
+  PreviousSpend = c(800, 1000, 1400),
+  Treatment = c(0, 1)
+) |>
+  mutate(Education = factor("Bachelor's",
+                            levels = levels(customer_model_data$Education)),
+         CampaignSpend = 0)
+```
+
+## Apply the Final Recipe and Predict
+
+Use the **final recipe and model**, refitted on all customers.
+
+```{r scenario-predictions}
+baked_scenarios <- bake(final_recipe, new_data = scenarios) |>
+  select(-CampaignSpend)
+
+profile_predictions <- bind_cols(
+  scenarios |> select(-CampaignSpend),
+  predict(final_fit, new_data = baked_scenarios),
+  predict(final_fit, new_data = baked_scenarios, type = "pred_int")
+)
+```
+
+Point predictions and 95% prediction intervals are on the log(spending + 1) scale. Convert both to dollars next.
+
+## Read the Predictions in Dollars
+
+```{r scenario-dollars}
+profile_predictions <- profile_predictions |>
+  mutate(.pred = exp(.pred) - 1,
+         .pred_lower = exp(.pred_lower) - 1,
+         .pred_upper = exp(.pred_upper) - 1)
+
+profile_predictions |>
+  mutate(across(c(.pred, .pred_lower, .pred_upper), ~ round(.x, 2)))
+```
+
+Each pair compares **no email (0)** with **email (1)**. The 95% prediction interval describes uncertainty in an individual customer's spending. Negative lower limits are a limitation of this model; spending cannot be negative.
+
+## Compare Email and No Email
+
+```{r scenario-contrasts}
+profile_comparison <- profile_predictions |>
+  select(PreviousSpend, Treatment, .pred) |>
+  pivot_wider(names_from = Treatment, values_from = .pred,
+              names_prefix = "email_") |>
+  mutate(difference = email_1 - email_0)
+
+profile_comparison |>
+  mutate(across(c(email_0, email_1, difference), ~ round(.x, 2)))
+```
+
+The difference is how much higher the model predicts spending to be with the email for each profile.
+
+## Example Recommendation
+
+Select the outcome-only log version using test MAE. Its performance is almost identical to the model with both spending logs, so the extra predictor transformation has not helped here.
+
+Using the log-outcome rule, the final model implies approximate expected changes of +0.23% per additional dollar of previous spending and +41.50% for email assignment, holding the other predictors fixed. The education comparisons and their uncertainty are interpreted above.
+
+For these bachelor's-degree profiles, higher previous spending corresponds to higher predicted campaign spending. The email prediction is higher than the no-email prediction for each profile, with the largest predicted dollar difference at $1,400 of previous spending. This makes that profile a candidate for targeting, subject to campaign costs and profit margins. The wide individual prediction intervals show that actual customer spending can vary considerably.
