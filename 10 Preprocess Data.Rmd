@@ -9,43 +9,26 @@ output:
 
 ## Today's Learning Goals
 
-- Choose preprocessing for a continuous outcome, continuous predictor, binary predictor, and categorical predictor.
-- Interpret coefficients and predictions on their correct scales.
-- Reuse training-data preprocessing for testing customers and customer profiles.
-- Compare predictive accuracy and communicate a recommendation with uncertainty.
-
-## Marketing Analytics Process
-
-<center>
-![](Figures/process_model.png){width=900px}
-</center>
-
-## Inferential Modeling Workflow
-
-<center>
-![](Figures/workflow-inference_preprocess.png){width=850px}
-</center>
-
-We technically did some pre-processing in lecture 09 with splitting the data in training and testing sets. Today we develop the **preprocess** stage further by preparing variables in the form a model needs.
+- Choose appropriate preprocessing for different covariates.
+- Adjust model evaluations and recommendations to account for preprocessing.
 
 ## Preprocessing Guide {.smaller}
 
+Preprocessing prepares variables for your model(s). 
+
 **Choose preprocessing steps based on the variable type, rather than applying every step to every variable.**
 
-| Variable / issue | What should I do? | Tool or rule |
+| Variable type | What should I do? | Tool or rule |
 |---|---|---|
-| **Missing values** | Check the variables the model uses; do not treat observed zeros as missing. | `drop_na()` or a justified missing-value strategy. |
 | **Continuous predictor:** `PreviousSpend` | If skewed, test whether log helps. | `step_log(PreviousSpend, offset = 1)` |
 | **Binary predictor:** `Treatment` | Keep 0/1; 0 = no email is the reference. | Do not log or add a second indicator. |
-| **Categorical predictor:** `Education` | Set the factor baseline; create $k-1$ indicators. | `fct_relevel()` then `step_dummy()` |
+| **Categorical predictor:** `Education` | Set the factor baseline; create $k-1$ indicators. | `step_relevel()` then `step_dummy()` |
 | **Continuous outcome:** `CampaignSpend` | If skewed, compare raw and logged models. | `step_log(CampaignSpend, offset = 1)`; reverse with `exp(.pred) - 1`. |
 | **Optional numeric-predictor tools** | Standardize scales / remove highly correlated inputs / create bins. | `step_normalize()` / `step_corr()` / `step_discretize()`. |
 
-## Preprocess Data
+## Today's Business Objective
 
-**Preprocessing** is data wrangling for models. 
-
-The home-goods retailer wants to know whether its email campaign increased spending, and how campaign-window spending differs by prior purchasing and education. These results will inform its next targeting decision.
+The home-goods retailer wants to know whether its email campaign increased spending, and whether campaign-window spending is associated with prior spending and education. These results will inform its next targeting decisions.
 
 ```{r setup, message=FALSE}
 library(tidyverse)
@@ -56,29 +39,28 @@ customers <- read_csv("home_goods_customers.csv", show_col_types = FALSE)
 
 Use `data_dictionary.pdf`. `CampaignSpend` is spending in the **30 days after assignment**; `PreviousSpend` covers the **prior 12 months**. `Treatment` is whether a consumer was assigned to **1 = campaign email, 0 = no campaign email**. Assignment does not mean the customer opened the email.
 
-## Refer to the Pre-Processing Guide
+## Data Cleaning Review
 
-Handle missing values.
+Review the missing-value check from our earlier data-cleaning lectures.
 
 ```{r}
 customers |> 
   summarise(across(everything(), ~ sum(is.na(.))))
 ```
 
-## Drop Missing Values, Transform Variables
+## Keep the Model Records
 
 None of the variables we'll use today have missing values. 
 
-We'll set **high school or less** as the education baseline.
+Keep all customers; we will set the education baseline later.
 
 ```{r model-data}
-customer_model_data <- customers |>
-  mutate(Education = fct_relevel(Education, "High school or less"))
+customer_model_data <- customers
 
 nrow(customer_model_data)
 ```
 
-## Split Before Doing Any Additional Pre-Processing
+## Split Before Preprocessing
 
 ```{r split}
 set.seed(42)
@@ -87,8 +69,8 @@ customer_train <- training(customer_split)
 customer_test <- testing(customer_split)
 ```
 
-- **8,000 training customers:** explore relationships, define and apply pre-processing steps, and fit models.
-- **2,000 testing customers:** apply pre-processing and evaluate model(s).
+- **8,000 training customers**
+- **2,000 testing customers**
 
 ## Analogy
 
@@ -164,7 +146,7 @@ customer_train |>
   facet_wrap(~ variable, scales = "free")
 ```
 
-The log compresses large purchases, but the zero-spending group remains at zero. It does **not** make this outcome normally distributed. Does it improve predictions?
+The log compresses large purchases, but the zero-spending group remains at zero. Does it improve predictions?
 
 ## Add a Log Step
 
@@ -176,7 +158,7 @@ customer_recipe <- customer_recipe |>
 - Name the two continuous spending variables explicitly.
 - `offset = 1` adds 1 before logging, which avoids problems with $log(0)$. All inputs must be greater than -1.
 
-This recipe tests one transformation choice; it does not assume every numeric variable should be logged.
+Evaluate model performance with and without a log transformation (if your outcome is skewed, log will *usually* improve model performance).
 
 ## Preprocessing Categorical Variables
 
@@ -195,10 +177,19 @@ In general, if a categorical variable has $k$ categories, your model will have $
 
 ```{r recipe-dummy}
 customer_recipe <- customer_recipe |>
+  step_relevel(Education, ref_level = "High school or less") |>
   step_dummy(Education)
 ```
 
-`step_dummy()` creates $k-1$ indicators by default, using the first factor level as the reference. We set that level explicitly earlier.
+`step_relevel()` sets **high school or less** as the reference. `step_dummy()` then creates the other $k-1$ indicators.
+
+## Finalizing the Recipe
+
+Review the steps.
+
+```{r}
+customer_recipe
+```
 
 ## Finalizing the Recipe
 
@@ -221,7 +212,7 @@ baked_customer_training <- customer_recipe |>
 baked_customer_training |> slice_head(n = 4)
 ```
 
-## Pre-Processing Timing
+## Review Pre-Processing Workflow
 
 (1) Train-test split
 (2) Construct the recipe (define variables and add preprocessing steps)
@@ -230,13 +221,28 @@ baked_customer_training |> slice_head(n = 4)
 
 Do not prepare a different recipe on testing customers or hypothetical profiles.
 
+## Prepare the Raw Recipe
+
+We need a recipe/model *without* the log transformation for comparison.
+
+Use the same education reference and indicators, keeping both spending variables in dollars.
+
+```{r raw-recipe}
+raw_recipe <- customer_train |>
+  recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
+  step_relevel(Education, ref_level = "High school or less") |>
+  step_dummy(Education) |>
+  prep()
+
+baked_raw_training <- bake(raw_recipe, new_data = customer_train)
+```
+
 ## Fit with and without Log Transformations {.smaller}
 
 ```{r fit-raw}
 fit_raw <- linear_reg() |>
   set_engine("lm") |>
-  fit(CampaignSpend ~ PreviousSpend + Treatment + Education,
-      data = customer_train)
+  fit(CampaignSpend ~ ., data = baked_raw_training)
 ```
 
 ```{r fit-baked}
@@ -245,7 +251,7 @@ fit_baked <- linear_reg() |>
   fit(CampaignSpend ~ ., data = baked_customer_training)
 ```
 
-`.` means all remaining columns in the baked model data. THe models use `CampaignSpend` on different scales.
+`.` means all remaining columns in the baked model data.
 
 ## Isolate the Outcome Log Transformation {.smaller}
 
@@ -255,6 +261,7 @@ Develop a recipe and train a model that log transforms `CampaignSpend` only. Thi
 outcome_recipe <- customer_train |>
   recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
   step_log(CampaignSpend, offset = 1) |>
+  step_relevel(Education, ref_level = "High school or less") |>
   step_dummy(Education) |>
   prep()
 
@@ -273,7 +280,7 @@ The home-goods retailer wants to know whether its email campaign increased spend
 
 How should we compare the models to decide which one to use to answer the retailer's questions?
 
-Work on developing a comparison and then we'll discuss.
+Write a potential prompt for Codex describing the steps needed to compare and evaluate all three models.
 
 ## Compare Predictive Performance with MAE
 
@@ -290,21 +297,21 @@ Which model predicts campaign spending most accurately for the **testing custome
 Use the recipes already prepared on the training data.
 
 ```{r testing-predictions}
+# prepare test data using the raw recipe
+test_raw <- bake(raw_recipe, new_data = customer_test)
 # prepare test data using recipe with both logs
 test_both_logs <- bake(customer_recipe, new_data = customer_test)
 # prepare test data using recipe with outcome log only
 test_outcome_log <- bake(outcome_recipe, new_data = customer_test)
 
 # generate predictions using all three models
-predictions_raw <- predict(fit_raw, new_data = customer_test)
+predictions_raw <- predict(fit_raw, new_data = test_raw)
 predictions_both_logs <- predict(fit_baked, new_data = test_both_logs)
 predictions_outcome_log <- predict(fit_outcome_log,
                                    new_data = test_outcome_log)
 ```
 
-**Important**: The raw model predicts `CampaignSpend`. The other two models predict `log(CampaignSpend + 1)`.
-
-We need to transform the log predictions back to dollars!
+**Important**: The raw model predicts `CampaignSpend`. The other two models predict `log(CampaignSpend + 1)`. We need to transform the log predictions back to dollars!
 
 ## Put All Predictions in Dollars
 
@@ -348,6 +355,7 @@ We have finished comparing models. Keep the selected specification and now use *
 final_recipe <- customer_model_data |>
   recipe(CampaignSpend ~ PreviousSpend + Treatment + Education) |>
   step_log(CampaignSpend, offset = 1) |>
+  step_relevel(Education, ref_level = "High school or less") |>
   step_dummy(Education) |>
   prep()
 
@@ -402,8 +410,6 @@ Hold the other predictors constant. Here, $\beta$ is the slope coefficient for $
 | $y$ and $\log(x)$ | A 1% increase in $x$: expected change in $y$ is $\beta/100$ units. |
 | $\log(y)$ and $\log(x)$ | A 1% increase in $x$: expected percentage change in $y$ is $\beta\%$. |
 
-These rules use natural logs. When we use `log(x + 1)` or `log(y + 1)`, these interpretations still apply.
-
 ## Interpret the Final Results
 
 Use the **log-outcome rule**: expected percentage change is approximately $100\times\beta\%$, holding the other predictors constant.
@@ -431,7 +437,9 @@ scenarios <- expand_grid(
 
 ## Apply the Final Recipe and Predict
 
-Use the **final recipe and model**, refitted on all customers.
+Use the **final recipe** to preprocess the profiles.
+
+Use the **final model** to predict outcomes for the profiles.
 
 ```{r scenario-predictions}
 baked_scenarios <- bake(final_recipe, new_data = scenarios) |>
@@ -480,7 +488,7 @@ Expand the current final model to include additional customer information and re
 2. **Refit and interpret:** fit that specification on all customers and examine its coefficients.
 3. **Predict:** apply the final recipe and model to customer profiles, then discuss targeting implications.
 
-*Next Time:* What if the outcome is not continuous?
+*Next Time:* Integrity and Causal Inference
 
 *Supplementary Material:* *Tidy Modeling with R*, Chapter 8.
 
@@ -498,7 +506,7 @@ Use **CampaignSpend** as the outcome and keep **Treatment** as a predictor. **Ch
 
 Refit your selected specification on **all eligible customers**. Submit a Word report rendered from Quarto with code, results, and:
 
-- Reasons for your predictor and preprocessing choices, including missing-value handling, sample sizes, and any categorical reference groups.
+- Data-cleaning decisions and sample sizes, plus reasons for your predictor and preprocessing choices and any categorical reference groups.
 - Test MAE in dollars and an explanation of your final model choice.
 - Final coefficients and 95% confidence intervals, with interpretations for Treatment and your selected predictors.
 - Predictions and 95% individual prediction intervals in dollars for **three customer profiles of your choosing**, each with and without the email. Choose profiles that help answer your targeting question.

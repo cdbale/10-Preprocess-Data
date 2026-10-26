@@ -232,3 +232,65 @@ Decision: Approve — direct publication request, 2026-10-16.
 Status: Verified — Canvas item 3180679 is published and links to https://cdbale.github.io/10-Preprocess-Data/?v=cd983adbf00b996f2c5febc86500e427f645e3a5#1. Downloaded through the saved Canvas URL and verified the complete HTML equals local index.html after line-ending normalization. Rechecked all three Canvas file downloads by SHA256, release timestamp, both descriptions, preserved assignment settings, and Live Workshop bundle placement.
 
 Final publication audit: all requested uploads and description/link updates verified. Exercise 9 and Grade Exercise 9 retain their existing unpublished status; the slide link and three file module items are published, with the solution date-restricted until November 3 at 5 p.m. Mountain. Assignment due dates and other settings were preserved. Publication tracking is committed separately after verification.
+
+29. Match the Lecture 10 starter to the concise early-lecture style — 2026-10-26.
+Decision: Approve — direct user request to follow Lectures 01–05, omit slide-by-slide explanations/code, and exclude the ending exercise.
+Status: Verified.
+Reviewed all starter files in Lectures 02–05; Lecture 01 has no starter file. Reworked Lecture 10 into Lecture 10 Notes with short third-level topic headings, brief code comments, selected examples, and student workspaces. Removed explanatory tables, analogy, completed interpretations and targeting decisions, log-distribution demonstration, coefficient-plot demonstration, and the final live-coding exercise as explicitly requested. No Exercise 9 assignment is included. Kept the three existing missing-values/split/raw-model practice prompts and added a histogram practice blank for material taught in Lectures 04–05; retained the mid-lecture Your Turn prompt. Preserved the recipe/model/prediction object names and code dependencies. Reduced the file from 420 to 284 lines. Parsed all chunks and executed supplied code with the required earlier-topic answers supplied only in memory; model coefficients, test MAE, intermediate data and all 24 profile predictions match the slides. Verified all remaining executable examples match the slide code. Concurrent user changes to slide learning goals and rendered HTML were inspected and preserved. No agent changes to other teaching artifacts, rendering, GitHub push, or Canvas upload in this local editing task.
+
+30. Remove starter chunk labels — 2026-10-26.
+Decision: Approve — direct user request.
+Status: Verified.
+Changed all 22 R chunk headers in 10-starter-code.qmd to unnamed {r} headers. Verified all other starter content was preserved. Local edit only.
+
+
+31. Set the education reference inside recipes — 2026-10-26.
+Decision: Approve — direct user request.
+Status: Verified.
+Removed the early Education mutate/fct_relevel from the lecture and starter; customer_model_data now retains the original customer records. Added step_relevel(Education, ref_level = 'High school or less') immediately before step_dummy() in both-log, outcome-log and final recipes. Added a raw recipe with the same reference and dummy coding, without logs, and applied it consistently to raw training/testing data. Updated the guide row and dummy-coding explanation in the slide source. Preserved all starter blanks and unnamed {r} headers. Executed old/new lecture code and the starter with required practice answers supplied only in memory: coefficients, dollar predictions, test MAE and 24 profile predictions/intervals unchanged. No rendering, publication, solution or standalone PDF edits.
+
+32. Separate data cleaning from model preprocessing — 2026-10-26.
+Decision: Approve — direct user request.
+Status: Verified.
+Removed the missing-values/drop_na row from the lecture's Preprocessing Guide and changed its first column to Variable type. Renamed Preprocessing Step 1: Missing Values to Data Cleaning Review, framing the retained check as previously taught material. Renamed the split heading to Split Before Preprocessing and separated data-cleaning decisions from predictor/preprocessing choices in the exercise deliverables. Matched the starter's review heading. Scanned the full lecture: remaining missing-value mentions are only in the data-cleaning review and completeness check, not described as preprocessing steps. No executable code changes, rendering, PDF regeneration, or publication.
+
+33. Refresh the standalone preprocessing guide — 2026-10-26.
+Decision: Approve — direct user request.
+Status: Verified.
+Regenerated root-level preprocessing-guide.pdf from the current slide table, omitting the missing-values row and including step_relevel before step_dummy. Verified one-page output, extracted text, and rendered layout with no clipping or overlaps. No publication.
+
+34. Restore the final live-coding activity in the starter — 2026-10-26.
+Decision: Approve — direct user clarification.
+Status: Verified.
+Appended the current lecture live-coding prompt and an unnamed R chunk with a neutral code-along comment. Preserved all preceding starter content. The separate Exercise 9 assignment and Wrapping Up remain excluded.
+
+CONSISTENCY REVIEW — 2026-10-26 (read-only teaching-material review)
+Verified: all supplied executable starter chunks match slide code. With prior-topic answers supplied only in memory, both versions produce identical data splits, recipes' baked outputs, model coefficients, MAE and 24 profile predictions/intervals. All six student workspaces remain blank. Intentional omissions of slide exposition/plots are not mismatches.
+
+35. Slide 14, Add a Log Step — qualify the performance claim.
+Issue: says a skewed outcome will usually improve model performance when logged; the starter and guide correctly ask students to evaluate whether it improves performance. Skewness alone does not establish improvement on dollar MAE.
+Proposed change: retain the instruction to compare with and without logging; remove the parenthetical generalization.
+Effect: aligns the slide with the existing starter and guide; no code changes.
+Decision: Reject / retain current material — Cam stated comfort with the current materials and requested publication on 2026-10-26.
+Status: User-reported — no revisions requested.
+
+36. Starter Your Turn workspace corresponding to slide 24 — separate prose from executable R.
+Issue: students are asked to write a Codex prompt inside an R chunk. Plain prose pasted there would fail when executed/rendered.
+Proposed change: provide ordinary text space, or explicitly require each prompt line to be an R comment.
+Effect: no change to the activity or model code.
+Decision: Reject / retain current material — Cam stated comfort with the current materials and requested publication on 2026-10-26.
+Status: User-reported — no revisions requested.
+
+37. Starter Fit the Models, outcome-only example — correct recipe count.
+Issue: the comment calls this a second recipe/model, but raw_recipe and customer_recipe already exist; this is the third model.
+Proposed change: say 'Create an outcome-only log recipe and model.'
+Effect: matches slide 23 and the three-model comparison.
+Decision: Reject / retain current material — Cam stated comfort with the current materials and requested publication on 2026-10-26.
+Status: User-reported — no revisions requested.
+
+38. Slides 33–34, log-slope interpretation table and results — label approximations and the shifted outcome.
+Issue: the table presents the log-scale percentage rules without approximation wording, while the following slide says approximately. The implemented outcome is log(CampaignSpend + 1), so percentage interpretations concern CampaignSpend + 1; 100 times beta is not an exact percentage change, especially for the treatment coefficient.
+Proposed change: label the log rules as approximations and add one brief reminder about the +1 outcome, without adding an inverse-transformation bias discussion.
+Effect: clarifies explanations; no starter computation changes.
+Decision: Reject / retain current material — Cam stated comfort with the current materials and requested publication on 2026-10-26.
+Status: User-reported — no revisions requested.
