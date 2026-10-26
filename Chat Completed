@@ -294,3 +294,8 @@ Proposed change: label the log rules as approximations and add one brief reminde
 Effect: clarifies explanations; no starter computation changes.
 Decision: Reject / retain current material — Cam stated comfort with the current materials and requested publication on 2026-10-26.
 Status: User-reported — no revisions requested.
+
+39. Publish current Lecture 10 materials — 2026-10-26.
+Decision: Approve — direct request to commit/push all changes, replace Canvas HTML/starter, and verify the Pages link.
+Status: Verified — all current changes pushed in 81fb08358b3977c193207069b6b35c25cd954a33; existing 42-slide HTML and index verified identical. Canvas HTML file 14183950 and starter file 14183952 downloaded and matched to local SHA256, with existing module items automatically updated and still published. Canvas slide link saved as https://cdbale.github.io/10-Preprocess-Data/?v=81fb08358b3977c193207069b6b35c25cd954a33#1; fetched via that saved URL and verified complete live HTML against local index after line-ending normalization. No further instructional changes, rendering, or assignment/solution updates.
+
