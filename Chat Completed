@@ -299,3 +299,8 @@ Status: User-reported — no revisions requested.
 Decision: Approve — direct request to commit/push all changes, replace Canvas HTML/starter, and verify the Pages link.
 Status: Verified — all current changes pushed in 81fb08358b3977c193207069b6b35c25cd954a33; existing 42-slide HTML and index verified identical. Canvas HTML file 14183950 and starter file 14183952 downloaded and matched to local SHA256, with existing module items automatically updated and still published. Canvas slide link saved as https://cdbale.github.io/10-Preprocess-Data/?v=81fb08358b3977c193207069b6b35c25cd954a33#1; fetched via that saved URL and verified complete live HTML against local index after line-ending normalization. No further instructional changes, rendering, or assignment/solution updates.
 
+
+40. Upload standalone preprocessing guide to Canvas — 2026-10-28.
+Decision: Approve — direct request to upload the PDF under the preprocessing lecture heading with one indent level.
+Status: Verified — preprocessing-guide.pdf uploaded as file 14229220, published module item 3315265 under Preprocess Data in course 38688 / module 415182, position 35 after the starter code, indent 1. File unlocked and visible; downloaded SHA256 matches the local PDF (369EB249D429DB32228B884B796F4C8E82EA35B546E1AAC4F85BD351D8256866).
+
